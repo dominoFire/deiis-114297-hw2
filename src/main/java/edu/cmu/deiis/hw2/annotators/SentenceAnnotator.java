@@ -17,6 +17,7 @@ public class SentenceAnnotator extends JCasAnnotator_ImplBase  {
 	
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
+		System.out.println("Entering SentenceAnnotator");
 		String text = aJCas.getDocumentText();
 		Question q;
 		Answer ans;
@@ -28,7 +29,7 @@ public class SentenceAnnotator extends JCasAnnotator_ImplBase  {
 		while(mlines.find()) {
 			c = text.charAt(mlines.start());
 			l = text.substring(mlines.start(), mlines.end());
-			System.err.println("match!: " +c +" [" +mlines.start() +"," +mlines.end()+"] " +l);
+			System.out.println("match!: " +c +" [" +mlines.start() +"," +mlines.end()+"] " +l);
 			if(c=='Q') {
 				q = new Question(aJCas);
 				q.setBegin(mlines.start() + 2);
@@ -46,7 +47,8 @@ public class SentenceAnnotator extends JCasAnnotator_ImplBase  {
 				ans.setConfidence(1.0); //TODO: calcular
 				ans.addToIndexes();
 			}
-		}		
+		}
+		System.out.println("Leaving SentenceAnnotator");
 	}
 
 }

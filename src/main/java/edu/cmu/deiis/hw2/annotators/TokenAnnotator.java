@@ -25,6 +25,7 @@ public class TokenAnnotator extends JCasAnnotator_ImplBase {
 		String text = aJCas.getDocumentText();
 		this.iterateAnnotations(aiq, text, aJCas);
 		this.iterateAnnotations(aia, text, aJCas);
+		System.out.println("Leaving " +annotatorName);
 	}
 	
 	private void iterateAnnotations(AnnotationIndex<Annotation> aiq, String text, JCas aJCas) {

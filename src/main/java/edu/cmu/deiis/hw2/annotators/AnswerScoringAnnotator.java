@@ -21,10 +21,9 @@ public class AnswerScoringAnnotator
 	public void process(JCas aJCas)
 			throws AnalysisEngineProcessException 
 	{
-		AnnotationIndex<Annotation> aiq = aJCas.getAnnotationIndex(Question.type);
+		System.out.println("Entering AnswerScoringAnnotator");
 		AnnotationIndex<Annotation> aia = aJCas.getAnnotationIndex(Answer.type);
 		AnnotationIndex<Annotation> ain = aJCas.getAnnotationIndex(NGram.type);
-		FSIterator<Annotation> qit = aiq.iterator();
 		FSIterator<Annotation> ait = aia.iterator();
 		FSIterator<Annotation> nit = ain.iterator();
 		NGram ngram = null;
@@ -52,20 +51,56 @@ public class AnswerScoringAnnotator
 			curr_ans_ngrams.clear();
 			while(i<answer_ngrams.size() && inAnnotation(ans, answer_ngrams.get(i))) {
 				curr_ans_ngrams.add(answer_ngrams.get(i));
+				i++;
 			}
+			score = scoreQuestionAnswer(question_ngrams, curr_ans_ngrams, aJCas.getDocumentText());
+			//creamos la anotacion del score
+			ans_score = new AnswerScore(aJCas);
+			ans_score.setBegin(ans.getBegin());
+			ans_score.setEnd(ans.getEnd());
+			ans_score.setAnswer(ans);
+			ans_score.setScore(score);
+			ans_score.addToIndexes();
+			ans_score.setConfidence(1.0);
+			ans_score.setCasProcessorId("AnswerScoringAnnotator");
 		}
-		score = scoreQuestionAnswer(question_ngrams, curr_ans_ngrams);
-		//creamos la anotacion del score
-		ans_score = new AnswerScore(aJCas);
-		ans_score.setBegin(ans.getBegin());
-		ans_score.setEnd(ans.getEnd());
-		ans_score.setAnswer(ans);
-		ans_score.setScore(score);
+		System.out.println("Leaving AnswerScoringAnnotator");
 	}
 	
-	private double scoreQuestionAnswer(ArrayList<NGram> question_ngrams, ArrayList<NGram> answer_ngrams)
+	private double scoreQuestionAnswer(ArrayList<NGram> question_ngrams, ArrayList<NGram> answer_ngrams, String text)
 	{
-		return 0.;
+		HashSet<String> question_tokens = new HashSet<String>();
+		HashSet<String> answer_tokens = new HashSet<String>();
+		
+		for(NGram n : question_ngrams)
+			for(int i=0; i<n.getElements().size(); i++)
+				question_tokens.add(
+						text.substring(
+								n.getElements(i).getBegin(), 
+								n.getElements(i).getEnd()
+						) );
+
+		for(NGram n : answer_ngrams)
+			for(int i=0; i<n.getElements().size(); i++)
+				answer_tokens.add(
+						text.substring(
+								n.getElements(i).getBegin(), 
+								n.getElements(i).getEnd()
+						) );
+		
+		//indice de jacard con los tokens
+		HashSet<String> all_tokens = new HashSet<String>();
+		all_tokens.addAll(question_tokens);
+		all_tokens.addAll(answer_tokens);
+		
+		int intersect = 0;
+		for(String qtok: answer_tokens) {
+			System.out.print(qtok + " ");
+			if(question_tokens.contains(qtok))
+				intersect++;
+		}
+		System.out.printf("; Score: %d/%d\n", intersect, all_tokens.size());
+		return (double)intersect/all_tokens.size();
 	}
 	
 	/**
