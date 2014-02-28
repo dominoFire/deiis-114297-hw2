@@ -9,6 +9,9 @@
     <delegateAnalysisEngine key="hw2-114297-tokenAnnotator">
       <import location="hw2-114297-tokenAnnotator.xml"/>
     </delegateAnalysisEngine>
+  <delegateAnalysisEngine key="hw2-114297-ngramAnnotator">
+      <import location="hw2-114297-ngramAnnotator.xml"/>
+    </delegateAnalysisEngine>
   </delegateAnalysisEngineSpecifiers>
   <analysisEngineMetaData>
     <name>hw2-114297-aae</name>
@@ -21,6 +24,7 @@
       <fixedFlow>
         <node>hw2-114297-sentenceAnnotator</node>
         <node>hw2-114297-tokenAnnotator</node>
+      <node>hw2-114297-ngramAnnotator</node>
       </fixedFlow>
     </flowConstraints>
     <typePriorities/>
@@ -30,11 +34,13 @@
         <inputs>
           <type allAnnotatorFeatures="true">edu.cmu.deiis.types.Question</type>
           <type allAnnotatorFeatures="true">edu.cmu.deiis.types.Answer</type>
+        <type allAnnotatorFeatures="true">edu.cmu.deiis.types.Token</type>
         </inputs>
         <outputs>
           <type allAnnotatorFeatures="true">edu.cmu.deiis.types.Token</type>
           <type allAnnotatorFeatures="true">edu.cmu.deiis.types.Question</type>
           <type allAnnotatorFeatures="true">edu.cmu.deiis.types.Answer</type>
+        <type allAnnotatorFeatures="true">edu.cmu.deiis.types.NGram</type>
         </outputs>
         <languagesSupported/>
       </capability>

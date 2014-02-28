@@ -84,4 +84,4 @@ public class TokenAnnotator extends JCasAnnotator_ImplBase {
 			}
 		}
 	}
-}
+}	
